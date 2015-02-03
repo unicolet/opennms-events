@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="org.postgresql.Driver"/>
+        <property name="url" value="jdbc:postgresql://#{systemProperties['postgres.host']?:'127.0.0.1'}/opennms"/>
+        <property name="username" value="#{systemProperties['postgres.user']?:'opennms'}"/>
+        <property name="password" value="#{systemProperties['postgres.password']?:'opennms'}"/>
+    </bean>
+
+    <bean id="indexNameFunction" class="com.github.unicolet.opennms.IndexNameFunction">
+        <constructor-arg name="dateFormat" value="YYYY.MM"/>
+    </bean>
+
+    <bean id="sql" class="org.apache.camel.component.sql.SqlComponent">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <bean id="eSheaders" class="com.github.unicolet.opennms.ESHeaders"/>
+
+    <camelContext xmlns="http://camel.apache.org/schema/spring"
+                  id="opennmsContext"
+                  autoStartup="true"
+                  allowUseOriginalMessage="false">
+
+        <propertyPlaceholder id="placeholder" location="classpath:camel-opennms.properties">
+            <propertiesFunction ref="indexNameFunction"/>
+        </propertyPlaceholder>
+
+        <!--
+            starts first, then stops. All other routes start after this one has completed
+            Same as: curl -XPUT http://localhost:9200/_template/opennms -d @elmapping.json
+        -->
+        <route id="elastisearchTemplateMapping" autoStartup="true" startupOrder="1">
+            <from uri="timer://runOnce?repeatCount=1&amp;delay=0"/>
+            <setHeader headerName="CamelHttpMethod">
+              <constant>PUT</constant>
+            </setHeader>
+            <setHeader headerName="CamelContentType">
+              <constant>application/x-www-form-urlencoded</constant>
+            </setHeader>
+            <setBody>
+                <groovy>new File('elmapping.json').text</groovy>
+            </setBody>
+            <to uri="http:127.0.0.1:9200/_template/opennms"/>
+            <log message="${body}"/>
+        </route>
+
+        <!-- consumer.initialDelay allows for the template mapping to be applied to elasticsearch (see previous route) -->
+        <route id="processOpennmsMessages-route" autoStartup="true">
+            <from uri="sql:{{sql.selectMessage}}?consumer.initialDelay=20000&amp;consumer.delay=30000&amp;maxMessagesPerPoll=1000&amp;consumer.onConsume={{sql.markMessage}}"/>
+            <to uri="direct:elasticsearch"/>
+        </route>
+
+        <route id="toElastisearch" autoStartup="true">
+            <from uri="direct:elasticsearch"/>
+            <bean ref="eSheaders" method="process"/>
+            <to uri="elasticsearch://opennms?operation=INDEX&amp;indexName={{index:opennms}}&amp;indexType=mmsg&amp;ip=127.0.0.1"/>
+        </route>
+
+    </camelContext>
+</beans>
