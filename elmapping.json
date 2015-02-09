@@ -52,6 +52,9 @@
                "eventseverity":{
                   "type":"long"
                },
+               "dow":{
+                  "type":"long"
+               },
                "hour":{
                   "type":"long"
                }
