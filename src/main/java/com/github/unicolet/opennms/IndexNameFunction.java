@@ -20,11 +20,11 @@ public class IndexNameFunction implements PropertiesFunction {
     private SimpleDateFormat df=null;
 
     public IndexNameFunction() {
-        df=new SimpleDateFormat("YYYY.MM");
+        df=new SimpleDateFormat("yyyy.MM");
     }
 
     public IndexNameFunction(String dateFormat) {
-        df=new SimpleDateFormat(dateFormat == null ? "YYYY.MM" : dateFormat);
+        df=new SimpleDateFormat(dateFormat == null ? "yyyy.MM" : dateFormat);
     }
 
     @Override

@@ -24,8 +24,9 @@ public class ESHeaders {
     public void process(Exchange exchange) {
         Message in = exchange.getIn();
         String indexName=null;
+        Map body=null;
         try {
-            Map body = (Map) in.getBody();
+            body = (Map) in.getBody();
             if(body.containsKey("@timestamp")) {
                 logger.trace("Computing indexName from @timestamp: "+body.get("@timestamp"));
                 indexName=idxName.apply(remainder, (Date) body.get("@timestamp"));
@@ -35,6 +36,10 @@ public class ESHeaders {
         } catch(Exception e) {
             logger.error("Cannot compute index name, failing back to default");
             indexName = idxName.apply(remainder);
+        }
+        // attention: this will probably log a LOT of lines!
+        if(body!=null) {
+            logger.trace("Computing indexName from @timestamp: "+body.get("@timestamp")+" yelds "+indexName);
         }
         in.setHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, indexName);
     }
