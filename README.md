@@ -12,7 +12,7 @@ This is a camel route so it needs Java, Maven 3, Elasticsearch and a database us
 4. start the process by running on a shell:
 
 ```
-     mvn camel:run -Dpostgres.host=10.9.4.41 -Dpostgres.user=opennmsevents -Dpostgres.password=secretpassword
+     mvn camel:run -Dpostgres.host=10.12.34.56 -Dpostgres.user=opennmsevents -Dpostgres.password=secretpassword
 ```
 
 wait for the process to load ALL you events into elasticsearch. This can take a lot of time/cpu/disk depending on
