@@ -1,3 +1,19 @@
+CREATE OR REPLACE FUNCTION commacat(text, text) RETURNS text AS '
+    SELECT CASE WHEN $1 IS NULL OR $1 = '''' THEN $2
+            WHEN $2 IS NULL OR $2 = '''' THEN $1
+            ELSE $1 || '','' || $2
+            END; 
+'
+ LANGUAGE SQL;
+
+drop aggregate IF EXISTS textcat_all(text);
+
+CREATE AGGREGATE textcat_all(
+  basetype    = text,
+  sfunc       = commacat,
+  stype       = text,
+  initcond    = ''
+);
 
 create view v_node_categories as
 select nodeid, textcat_all(categoryname) as categories
