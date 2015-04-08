@@ -1,6 +1,9 @@
 # opennms-events
 Analyze opennms events with Kibana
 
+![Kibana showing graphs of OpenNMS events](https://pbs.twimg.com/media/B-3V2MDUMAEMN0s.jpg:large "Kibana showing OpenNMS events")
+
+
 Installation
 ------------
 
