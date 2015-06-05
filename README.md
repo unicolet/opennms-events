@@ -27,3 +27,11 @@ An init.d script (named camel-opennms) for starting opennms-events as a system s
 The script assumes that you will run the service as *appuser:apache*, edit line
 34 to change user/group.
 
+RPM
+---
+
+A RPM is available at:
+
+     https://packagecloud.io/unicoletti/opennms
+
+
