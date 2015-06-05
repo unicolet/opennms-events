@@ -27,6 +27,8 @@ pidfile="/var/run/$name.pid"
 [ -r /etc/default/$name ] && . /etc/default/$name
 [ -r /etc/sysconfig/$name ] && . /etc/sysconfig/$name
 
+args=" $OPTS $args "
+
 start() {
 
 

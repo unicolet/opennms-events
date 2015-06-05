@@ -34,4 +34,6 @@ A RPM is available at:
 
      https://packagecloud.io/unicoletti/opennms
 
+JDK 7 or higher is required.
+
 
