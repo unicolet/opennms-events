@@ -1,0 +1,44 @@
+language: java
+jdk:
+- oraclejdk7
+
+addons:
+  apt_packages:
+  - rpm
+
+env:
+- VERSION=1.0
+
+script: "mvn package"
+
+after_success:
+- gem install fpm
+- mkdir -p opt/opennms-events etc/init.d etc/sysconfig
+- cp init.d/opennms-events etc/init.d
+- cp target/opennms-events-2.14.1.jar opt/opennms-events
+- cp elmapping.json README.md opt/opennms-events
+- touch etc/sysconfig/opennms-events
+- printf "#!/bin/sh\n/sbin/chkconfig --add opennms-events\n" > after-install.sh
+- printf "#!/bin/sh\n/sbin/chkconfig --del opennms-events\n" > before-remove.sh
+- chmod +x after-install.sh before-remove.sh
+- fpm -s dir -t rpm -a all -n opennms-events -v ${VERSION} --iteration
+  ${TRAVIS_JOB_ID} --description "OpenNMS events to Elasticsearch archiver" --after-install after-install.sh
+  --before-remove before-remove.sh --config-files etc/sysconfig/opennms-events
+  --maintainer umberto.nicoletti@gmail.com --url https://github.com/unicolet/opennms-events
+  --rpm-user root --rpm-group root --directories opt/opennms-events opt etc
+- mkdir rpm
+- mv *.rpm rpm
+- ls -la rpm
+
+deploy:
+  provider: packagecloud
+  username: unicoletti
+  token:
+    secure: Fzi+fEjpR7xhBcyEyHKwOzbO1KfqTFEz8nRoLezsBxSm6R5ks5LkdiqsonTjIr8iwLFXO4pvORphuqyoZl0qQWtj8WFIrM0Z5tqHrpSoquEcbtDxVkWRIJDVc/a5Xrxo15b36uMmo0nuujzZcYEP5Q3LyxFJV4MArlnIXSgsRps=
+  repository: opennms
+  local-dir: rpm
+  dist: 'el/6'
+  skip_cleanup: true
+  on:
+    branch: release-rpm
+    jdk: oraclejdk7
