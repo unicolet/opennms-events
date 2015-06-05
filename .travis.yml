@@ -17,7 +17,7 @@ after_success:
 - cp init.d/opennms-events etc/init.d
 - cp target/opennms-events-2.14.1.jar opt/opennms-events
 - cp elmapping.json README.md sql/opennms_events.sql LICENSE opt/opennms-events
-- printf "#\nCustomize options here\n#\n#OPTS=\"-Dpostgres.host=127.0.0.1 -Dpostgres.user=opennms -Dpostgres.password=opennms\"\n" > etc/sysconfig/opennms-events
+- printf "#\n#Customize options here (including Xmx, ecc)\n#\n#OPTS=\"-Dpostgres.host=127.0.0.1 -Dpostgres.user=opennms -Dpostgres.password=opennms\"\n" > etc/sysconfig/opennms-events
 - printf "#!/bin/sh\n/sbin/chkconfig --add opennms-events\n/usr/sbin/useradd -r -c 'OpenNMS 2 Elasticsearch' -g daemon onmsevents -M -d /opt/opennms-events\n" > after-install.sh
 - printf "#!/bin/sh\n/sbin/chkconfig --del opennms-events\n/usr/sbin/userdel onmsevents\n" > before-remove.sh
 - chmod +x after-install.sh before-remove.sh
