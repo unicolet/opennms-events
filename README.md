@@ -12,7 +12,7 @@ This is a camel route so it needs Java, Maven 3, Elasticsearch and a database us
 1. clone this repository, then cd into it
 2. create the views and support tables using the script in the sql folder. It is recommended to create a dedicate postgres user for this process
 3. start elasticsearch on the same node where you will run this process. Configure the elasticsearch cluster name to be '**opennms**'
-4. deploy kibana (optional can be done later)
+4. deploy kibana (optional, can be done later)
 5. start the process by running on a shell:
 
 ```
@@ -35,7 +35,7 @@ A RPM (tested on Centos 6, should work on 7, not on 5) is available at:
 
      https://packagecloud.io/unicoletti/opennms
 
-JDK 7 or higher is required, make sure it is installed, because the rpm does not require it.
+JDK 7 or higher is required, make sure it is installed, because the rpm does not explicitly require it.
 
 Install the latest opennms-events rpm and elasticsearch. A tipical one-node elasticsearch configuration would be the following:
 
@@ -44,19 +44,18 @@ Install the latest opennms-events rpm and elasticsearch. A tipical one-node elas
      discovery.zen.ping.multicast.enabled: false
      discovery.zen.ping.unicast.hosts: ["127.0.0.1"]
 
-Remember that opennms-events and elastisearch shoud be running on the same node as they will commmunicate over 127.0.0.1!
+Remember that opennms-events and elastisearch must be running on the same node as they will commmunicate over 127.0.0.1!
 
 Configure opennms-events by editing the */etc/sysconfig/opennms-events* file. Set database host, user and password
 according to your setup. If you are running opennms-events on the same host as opennms *and* opennms uses the default database config leave the defaults.
 
 Create the views and support table in the opennms database using the /opt/opennms-events/opennms_events.sql script.
-For example, copy the sql script over to the database host and run as postgres user:
+For example, copy the sql script over to the database host and as the postgres user run:
 
     psql opennms < opennms_events.sql
 
-Start elastiscsearch and opennms-events. Review the logs in /var/log/opennms-events.{log,err}.
-If all goes well after a while (~20s) elasticsearch should start ingesting data and the */var/lib/elasticsearch* directory
-should start growing in size. 
+Start elastiscsearch and then opennms-events. Review the logs in /var/log/opennms-events.{log,err}.
+If all goes well after a while (~20s) elasticsearch should start ingesting data and the */var/lib/elasticsearch* directory should start growing in size. 
 
 Install Kibana and start browsing your events! 
 
