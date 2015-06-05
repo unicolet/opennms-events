@@ -27,14 +27,14 @@
     </parent>
 
     <artifactId>opennms-events</artifactId>
-    <packaging>bundle</packaging>
+    <packaging>jar</packaging>
     <name>opennms-events</name>
     <description>Send OpenNMS events to Elasticsearch for inspection with Kibana</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.example.sql.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>com.github.unicolet.*</camel.osgi.export.pkg>
         <!-- dynamic import for the Derby JDBC driver -->
-        <camel.osgi.dynamic>*</camel.osgi.dynamic>
+        <!--<camel.osgi.dynamic>*</camel.osgi.dynamic>-->
     </properties>
 
     <dependencies>
@@ -117,6 +117,43 @@
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-maven-plugin</artifactId>
                 <version>${project.version}</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <minimizeJar>true</minimizeJar>
+                    <filters>
+                         <filter>
+                           <includes>
+                               <include>com/github/unicolet/opennms/*</include>
+                           </includes>
+                         </filter>
+                      </filters>
+                    <!--<artifactSet>-->
+                        <!--<includes>-->
+                            <!--<include>org.apache.camel:opennms-events:bundle:${project.version}</include>-->
+                        <!--</includes>-->
+                        <!--<excludes>-->
+                            <!--<exclude>junit:junit</exclude>-->
+                        <!--</excludes>-->
+                    <!--</artifactSet>-->
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                            <mainClass>org.apache.camel.spring.Main</mainClass>
+                        </transformer>
+                    </transformers>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

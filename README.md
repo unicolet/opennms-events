@@ -23,7 +23,7 @@ the number of events. If you want to load only recent events tweak the view crea
 
 When you have enough events loaded, point your browser to kibana and start creating your own dashboards!
 
-An init.d script for starting opennms-events as a system service is available in the init.d directory.
+An init.d script (named camel-opennms) for starting opennms-events as a system service is available in the init.d directory.
 The script assumes that you will run the service as *appuser:apache*, edit line
 34 to change user/group.
 
