@@ -31,7 +31,7 @@ start() {
 
 
   # Run the program!
-  chroot --userspec=appuser:apache / sh -c "
+  chroot --userspec=onmsevents:daemon / sh -c "
     cd ${newroot} 
     
     exec \"$program\" $args

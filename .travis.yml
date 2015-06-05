@@ -12,20 +12,16 @@ env:
 script: "mvn package"
 
 after_success:
-- gem install fpm
+- ( fpm -h > /dev/null 2>&1) || gem install fpm
 - mkdir -p opt/opennms-events etc/init.d etc/sysconfig
 - cp init.d/opennms-events etc/init.d
 - cp target/opennms-events-2.14.1.jar opt/opennms-events
-- cp elmapping.json README.md opt/opennms-events
+- cp elmapping.json README.md sql/opennms_events.sql LICENSE opt/opennms-events
 - touch etc/sysconfig/opennms-events
-- printf "#!/bin/sh\n/sbin/chkconfig --add opennms-events\n" > after-install.sh
-- printf "#!/bin/sh\n/sbin/chkconfig --del opennms-events\n" > before-remove.sh
+- printf "#!/bin/sh\n/sbin/chkconfig --add opennms-events\n/usr/sbin/useradd -c 'OpenNMS 2 Elasticsearch' -g daemon onmsevents -M -d /opt/opennms-events\n" > after-install.sh
+- printf "#!/bin/sh\n/sbin/chkconfig --del opennms-events\n/usr/sbin/userdel onmsevents\n" > before-remove.sh
 - chmod +x after-install.sh before-remove.sh
-- fpm -s dir -t rpm -a all -n opennms-events -v ${VERSION} --iteration
-  ${TRAVIS_JOB_ID} --description "OpenNMS events to Elasticsearch archiver" --after-install after-install.sh
-  --before-remove before-remove.sh --config-files etc/sysconfig/opennms-events
-  --maintainer umberto.nicoletti@gmail.com --url https://github.com/unicolet/opennms-events
-  --rpm-user root --rpm-group root --directories opt/opennms-events opt etc
+- fpm -s dir -t rpm -a all -n opennms-events -v ${VERSION} --iteration ${TRAVIS_JOB_ID} --description "OpenNMS events to Elasticsearch archiver" --after-install after-install.sh --before-remove before-remove.sh --config-files etc/sysconfig/opennms-events --maintainer umberto.nicoletti@gmail.com --url https://github.com/unicolet/opennms-events --rpm-user root --rpm-group root --directories opt/opennms-events opt etc
 - mkdir rpm
 - mv *.rpm rpm
 - ls -la rpm
