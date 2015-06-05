@@ -30,7 +30,7 @@ deploy:
   provider: packagecloud
   username: unicoletti
   token:
-    secure: Fzi+fEjpR7xhBcyEyHKwOzbO1KfqTFEz8nRoLezsBxSm6R5ks5LkdiqsonTjIr8iwLFXO4pvORphuqyoZl0qQWtj8WFIrM0Z5tqHrpSoquEcbtDxVkWRIJDVc/a5Xrxo15b36uMmo0nuujzZcYEP5Q3LyxFJV4MArlnIXSgsRps=
+    secure: "UxN3RcONdZI0jH8girLy6tuzEqOYxNMEsuhZe6JBnNiHuoztft62nQCkGYqqq+Ys9N9N6mxi5vgdTgI6hoP3RuzIcqbWG/EcHUYc/mxYEaTU7BRWshj4PWxi2pXp7yvwyE22kjpqhf+vSo1+XAcwBCVYKoLurwBsfLLcuySyATg="
   repository: opennms
   local-dir: rpm
   dist: 'el/6'
